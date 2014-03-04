@@ -1,0 +1,8 @@
+#!/bin/bash
+# positions terminal windows in stacked layout on right
+
+# setting position of current window
+osascript ~/.scripts/tright.scpt
+
+# creating new terminal and setting position of window
+osascript -e "tell application \"Terminal\"" -e "do script \"osascript ~/.scripts/bright.scpt\"" -e "activate" -e "end tell"
