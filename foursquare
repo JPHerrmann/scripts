@@ -7,7 +7,11 @@ osascript ~/.scripts/tright.scpt
 # creating new terminals and setting position of windows
 osascript -e "tell application \"Terminal\"" -e "do script \"osascript ~/.scripts/tleft.scpt\"" -e "activate" -e "end tell"
 
+sleep 0.2
+
 osascript -e "tell application \"Terminal\"" -e "do script \"osascript ~/.scripts/bright.scpt\"" -e "activate" -e "end tell"
+
+sleep 0.2
 
 osascript -e "tell application \"Terminal\"" -e "do script \"osascript ~/.scripts/bleft.scpt\"" -e "activate" -e "end tell"
 
