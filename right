@@ -1,0 +1,5 @@
+#!/bin/bash
+# positions terminal window on right
+
+# setting position of current window
+osascript ~/.scripts/right.scpt

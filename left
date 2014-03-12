@@ -1,0 +1,5 @@
+#!/bin/bash
+# positions terminal window on left side
+
+# setting position of current window
+osascript ~/.scripts/left.scpt
