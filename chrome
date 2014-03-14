@@ -1,0 +1,22 @@
+#!/bin/bash
+# opens chrome with a provided url
+# if first argument is 'search', it performs a 
+# chrome search with the keywords provided
+#
+# examples:
+# chrome google.com
+# chrome search why is blake so awesome?
+search_url='http://google.com/search?q='
+if [[ "$1" == "search" ]]; then
+    echo "searching..."
+    searchlist=("$@")
+    unset searchlist[0]
+    IFS='+'
+    open -a "/Applications/Google Chrome.app"  $search_url"${searchlist[*]}"
+else
+    if [[ ! "$1" =~ "http://" ]] && [[ ! "$1" =~ "https://" ]]; then
+	open -a "/Applications/Google Chrome.app" http://$1
+    else
+	open -a "/Applications/Google Chrome.app" $1
+    fi
+fi
