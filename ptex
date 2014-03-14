@@ -1,9 +1,0 @@
-#!/bin/bash
-# bash script to compile latex documents and remove 
-# logfiles and trash afterwards
-if [[ ! "$1" =! ".tex" ]]; then
-    echo "input file not .tex file"
-else
-    pdflatex $1
-    rm *.log *.aux
-fi 
