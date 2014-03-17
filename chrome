@@ -6,7 +6,38 @@
 # examples:
 # chrome google.com
 # chrome search why is blake so awesome?
+#
+# added "-n" to open a new window instance of chrome
+# examples:
+# chrome -n google.com
+# chrome -n search why is parker so awesome?
+
 search_url='http://google.com/search?q='
+
+# opens a new chrome window w/ or w/o search
+function newChromeWindow {    
+if [[ "$1" == "-n" ]] && [[ "$2" == "search" ]]; then
+    echo "searching..."
+    searchlist=("$@")
+    unset searchlist[0]
+    unset searchlist[1]
+    IFS='+'
+    osascript newChromeWindow.scpt
+    open -a "/Applications/Google Chrome.app"  $search_url"${searchlist[*]}"
+else
+    if [[ ! "$2" =~ "http://" ]] && [[ ! "$2" =~ "https://" ]]; then
+        osascript newChromeWindow.scpt
+	open -a "/Applications/Google Chrome.app" http://$2
+    else
+        osascript newChromeWindow.scpt
+	open -a "/Applications/Google Chrome.app" $2
+    fi
+fi
+}
+
+# opens a new tab in a current chrome session w/ or w/o search
+# otherwise, opens up google chrome w/ or w/o search
+function googleChrome {
 if [[ "$1" == "search" ]]; then
     echo "searching..."
     searchlist=("$@")
@@ -15,8 +46,16 @@ if [[ "$1" == "search" ]]; then
     open -a "/Applications/Google Chrome.app"  $search_url"${searchlist[*]}"
 else
     if [[ ! "$1" =~ "http://" ]] && [[ ! "$1" =~ "https://" ]]; then
-	open -a "/Applications/Google Chrome.app" http://$1
+        open -a "/Applications/Google Chrome.app" http://$1
     else
-	open -a "/Applications/Google Chrome.app" $1
+        open -a "/Applications/Google Chrome.app" $1
     fi
+fi
+}
+
+# function calls for user input
+if [[ "$1" == "-n" ]]; then
+    newChromeWindow "$@"
+else
+    googleChrome "$@"
 fi
