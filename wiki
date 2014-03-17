@@ -1,0 +1,29 @@
+#!/bin/bash
+# opens wikipedia in a chrome window with a provided url
+# if the first argument is '-n', a new window instance
+# of chrome is initialized
+# the following keywords after 'wiki' or 'wiki -n' are
+# searched on wikipedia
+#
+# examples:
+# wiki N=8 Supergravity
+# wiki -n N=4 supersymmetric Yang-Mills theory
+#
+# NOTE: some searches are case and symbol dependent
+# so results may vary
+
+search_url='https://en.wikipedia.org/wiki/'
+
+if [[ "$1" == "-n" ]]; then
+    echo "searching..."
+    searchlist=("$@")
+    unset searchlist[0]
+    IFS='+'
+    osascript newChromeWindow.scpt
+    open -a "/Applications/Google Chrome.app" $search_url"${searchlist[*]}"
+else
+    echo "searching..."
+    searchlist=("$@")
+    IFS='+'
+    open -a "/Applications/Google Chrome.app" $search_url"${searchlist[*]}"
+fi
