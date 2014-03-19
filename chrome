@@ -22,13 +22,16 @@ if [[ "$1" == "-n" ]] && [[ "$2" == "search" ]]; then
     unset searchlist[0]
     unset searchlist[1]
     IFS='+'
+    cd ~/.scripts/
     osascript newChromeWindow.scpt
     open -a "/Applications/Google Chrome.app"  $search_url"${searchlist[*]}"
 else
     if [[ ! "$2" =~ "http://" ]] && [[ ! "$2" =~ "https://" ]]; then
-        osascript newChromeWindow.scpt
+        cd ~/.scripts/
+	osascript newChromeWindow.scpt
 	open -a "/Applications/Google Chrome.app" http://$2
     else
+	cd ~/.scripts
         osascript newChromeWindow.scpt
 	open -a "/Applications/Google Chrome.app" $2
     fi
