@@ -4,4 +4,4 @@
 # examples:
 # sublime file.txt script.py
 
-/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl $@
+/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl "$@"
