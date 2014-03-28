@@ -19,7 +19,7 @@ if [[ "$1" == "-n" ]]; then
     searchlist=("$@")
     unset searchlist[0]
     IFS='+'
-    osascript newChromeWindow.scpt
+    osascript -e "tell application \"/Applications/Google Chrome.app\"" -e "make new window" -e "activate" -e "end tell" 
     open -a "/Applications/Google Chrome.app" $search_url"${searchlist[*]}"
 else
     echo "searching..."
