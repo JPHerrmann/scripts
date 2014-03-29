@@ -15,6 +15,6 @@ if [ -f $file ]; then
     IFS=' '
     # do the git stuff
     git add $file
-    git commit -m '${message[*]}'
+    git commit -m "${message[*]}"
     git push
 fi
