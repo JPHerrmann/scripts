@@ -1,0 +1,20 @@
+#!/bin/bash
+# script to automatically add, commit, and push
+# a file via git
+#
+# examples:
+# gitput file.txt 'this is a file'
+# 
+# notes:
+# can only handle a single file
+file=$1
+shift
+if [ -f $file ]; then
+    # join comment
+    message=("$@")
+    IFS=' '
+    # do the git stuff
+    git add $file
+    git commit -m '${message[*]}'
+    git push
+fi
