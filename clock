@@ -1,0 +1,96 @@
+#!/bin/bash
+# automatic punchcard - punch in and out when 
+# working on projects to see how much time was spent
+# on them
+#
+# examples:
+# clock in project1
+# clock in project2
+# clock out project1
+# clock -s --> shows summary
+# clock -r --> resets and archives the working punchcard
+# clock -l --> shows list of current projects
+#
+# @author <bprinty@gmail.com>
+# ------------------------------------------------------
+
+cfile=$HOME/.pc/punchcard.txt
+    
+# reset the punchcard
+# @param $1 - punchcard file to reset
+reset() {
+    mkdir -p $HOME/.pc
+    user=`whoami`
+    tme=`date +"%D-%T"`
+    if [ ! -e $1 ]; then
+	echo "punchcard for $user on $tme:" > $1
+    else
+	clock -s >> $HOME/.pc/archive.txt
+	echo "" >> $HOME/.pc/archive.txt
+	echo "punchcard for $user on $tme:" > $1
+    fi
+}
+
+# grabbing category
+if [ $# -eq 0 ]; then
+   echo "clock [options] <in|out> <category>"
+   echo ""
+   echo "options:"
+   echo "-s - report summary"
+   echo "-r - reset the sheet"
+   echo "-l - list all current running projects"
+   exit 1
+fi
+
+# displaying summary (if specified)
+if [[ $1 =~ "-s" ]]; then
+   head -1 $cfile
+   tme=`date +"%D-%T"`
+   while read line 
+   do
+       line=${line/OUT/$tme}
+       start=`date -d "$(echo $line | awk '{ print $2 }' | sed 's/.*-//g')" +%s`
+       stop=`date -d "$(echo $line | awk '{ print $3 }' | sed 's/.*-//g')" +%s`
+       echo "$line --> time spent: $(( ($stop-$start) / 60)) minutes"
+   done < <(tail -n+2 $cfile)
+   exit 0
+fi
+
+# reset the punchcard (if specified)
+if [[ $1 =~ "-r" ]]; then
+   reset $cfile
+   exit 0
+fi
+
+# listing projects
+if [[ $1 =~ "-l" ]]; then 
+   grep 'OUT' $cfile | awk '{ print $1 }'
+   exit 0
+fi
+
+# configuring args
+type=$1
+category=$2
+tme=`date +"%D-%T"`
+
+# grabbing current category
+curcat=`grep $category $cfile`
+
+# processing
+if [[ $type =~ "in" ]]; then
+   if [ -z "$curcat" ]; then
+       echo "$category $tme OUT" >> $cfile 
+   else
+       echo "you already checked in for $category"
+       exit 0
+   fi
+elif [[ $type =~ "out" ]]; then
+   if [ ! -z "$curcat" ]; then
+       checkout=${curcat/OUT/$tme}
+       grep -v "$curcat" $cfile > $cfile.tmp
+       echo $checkout >> $cfile.tmp
+       mv $cfile.tmp $cfile
+   else
+       echo "you haven't checked in for $category"
+   fi
+fi
