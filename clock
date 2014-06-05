@@ -15,13 +15,22 @@
 # ------------------------------------------------------
 
 cfile=$HOME/.pc/punchcard.txt
+
+# date works differently on a mac - if you want
+# to use this, then install coreutils:
+# sudo port install coreutils || brew install coreutils
+if [ $(uname) == "Darwin" ]; then
+  date=gdate
+else
+  date=date
+fi
     
 # reset the punchcard
 # @param $1 - punchcard file to reset
 reset() {
     mkdir -p $HOME/.pc
     user=`whoami`
-    tme=`date +"%D-%T"`
+    tme=`$date +"%D-%T"`
     if [ ! -e $1 ]; then
 	echo "punchcard for $user on $tme:" > $1
     else
@@ -45,12 +54,12 @@ fi
 # displaying summary (if specified)
 if [[ $1 =~ "-s" ]]; then
    head -1 $cfile
-   tme=`date +"%D-%T"`
+   tme=`$date +"%D-%T"`
    while read line 
    do
        line=${line/OUT/$tme}
-       start=`date -d "$(echo $line | awk '{ print $2 }' | sed 's/.*-//g')" +%s`
-       stop=`date -d "$(echo $line | awk '{ print $3 }' | sed 's/.*-//g')" +%s`
+       start=`$date -d "$(echo $line | awk '{ print $2 }' | sed 's/.*-//g')" +%s`
+       stop=`$date -d "$(echo $line | awk '{ print $3 }' | sed 's/.*-//g')" +%s`
        echo "$line --> time spent: $(( ($stop-$start) / 60)) minutes"
    done < <(tail -n+2 $cfile)
    exit 0
@@ -71,7 +80,7 @@ fi
 # configuring args
 type=$1
 category=$2
-tme=`date +"%D-%T"`
+tme=`$date +"%D-%T"`
 
 # grabbing current category
 curcat=`grep $category $cfile`
