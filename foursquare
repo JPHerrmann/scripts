@@ -1,17 +1,24 @@
 #!/bin/bash
 # positions terminal windows in stacked layout on right
+# 
+# @author <john.herrmann@utexas.edu>
+# @author <bprinty@gmail.com>
+# -----------------------------------------------------
 
-# setting position of current window
-osascript ~/.scripts/tright.scpt
+if [ $(uname) == "Darwin" ]; then
+	# setting position of current window
+	osascript ~/.scripts/tright.scpt
 
-# creating new terminals and setting position of windows
-osascript -e "tell application \"Terminal\"" -e "do script \"osascript ~/.scripts/tleft.scpt\"" -e "activate" -e "end tell"
-
-sleep 0.15
-
-osascript -e "tell application \"Terminal\"" -e "do script \"osascript ~/.scripts/bright.scpt\"" -e "activate" -e "end tell"
-
-sleep 0.15
-
-osascript -e "tell application \"Terminal\"" -e "do script \"osascript ~/.scripts/bleft.scpt\"" -e "activate" -e "end tell"
-
+	# creating new terminals and setting position of windows
+	osascript -e "tell application \"Terminal\"" -e "do script \"osascript ~/.scripts/tleft.scpt\"" -e "activate" -e "end tell"
+	sleep 0.15
+	osascript -e "tell application \"Terminal\"" -e "do script \"osascript ~/.scripts/bright.scpt\"" -e "activate" -e "end tell"
+	sleep 0.15
+	osascript -e "tell application \"Terminal\"" -e "do script \"osascript ~/.scripts/bleft.scpt\"" -e "activate" -e "end tell"
+else
+	# hardcoded numbers - blake's work computer
+	wmctrl -r :ACTIVE: -e 0,0,0,845,500
+	gnome-terminal --geometry 93x26+0+545
+	gnome-terminal --geometry 93x27+850+0
+	gnome-terminal --geometry 93x26+850+545
+fi

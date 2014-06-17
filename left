@@ -1,5 +1,15 @@
 #!/bin/bash
 # positions terminal window on left side
 
-# setting position of current window
-osascript ~/.scripts/left.scpt
+if [ $(uname) == "Darwin" ]; then
+	# setting position of current window
+	osascript ~/.scripts/left.scpt
+else
+	# getting dimensions
+	dimstr=`xrandr | tr ' ' '\n' | egrep '.*?x.*?\+0\+0' | head -1 | sed 's/+.*//g'`
+	set -- "$dimstr"
+	IFS="x"; declare -a dims=($*)
+	width=`expr "${dims[0]}" / 2`
+	height="${dims[1]}"
+	wmctrl -r :ACTIVE: -e 0,0,0,$width,$height
+fi
