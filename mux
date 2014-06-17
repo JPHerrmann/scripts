@@ -1,0 +1,6 @@
+#!/bin/bash
+# tmux without status bar
+tmux
+sleep 3s
+tmux set -g status off
+tmux set -g mouse-mode on

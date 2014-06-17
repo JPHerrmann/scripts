@@ -1,0 +1,6 @@
+#!/bin/bash
+wmctrl -r :ACTIVE: -e 0,0,0,845,1000
+
+gnome-terminal --geometry 93x27+850+0
+
+gnome-terminal --geometry 93x26+850+545
