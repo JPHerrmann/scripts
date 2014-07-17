@@ -10,6 +10,7 @@
 # clock -s --> shows summary
 # clock -r --> resets and archives the working punchcard
 # clock -l --> shows list of current projects
+# clock -c --> clears punchcard
 #
 # @author <bprinty@gmail.com>
 # ------------------------------------------------------
@@ -75,6 +76,13 @@ fi
 if [[ $1 =~ "-l" ]]; then 
    grep 'OUT' $cfile | awk '{ print $1 }'
    exit 0
+fi
+
+# clearing clock
+if [[ $1 =~ "-c" ]]; then
+    rm $cfile
+    reset $cfile
+    exit 0
 fi
 
 # configuring args
