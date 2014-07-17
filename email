@@ -1,0 +1,15 @@
+#!/bin/bash
+# check gmail, with bash!
+# @param $1 - username
+# @param $2 - password
+# @author <bprinty@gmail.com>
+# -------------------------------------------------
+ 
+# pulling html from inbox
+wget -T 3 -t 1 -q --secure-protocol=TLSv1 \
+ --no-check-certificate \
+ --user=$1 --password=$2 \
+ https://mail.google.com/mail/feed/atom -O gmail.$1.$$.out
+
+# parsing html
+
