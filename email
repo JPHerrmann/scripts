@@ -27,8 +27,9 @@ fi
 parsed_html=${html/.out/.parsed.out}
 cat $html | perl -ne 'foreach( $_ =~ m/<entry>(.*?)<\/entry/g ){ print $_."\n"; }' > $parsed_html
 
-# showing emails=
-IFS=$'\n'
+# showing emails
+newline=$'\n'
+IFS=$newline
 for m in `cat $parsed_html`; do
     
     title=`echo $m | sed 's/.*<title>//g' | sed 's/<\/title>.*//g'`
@@ -40,12 +41,9 @@ for m in `cat $parsed_html`; do
     echo ""
     read -p "wanna read it? (y/n)" response
     if [ "$response" = "y" ]; then
-	echo ""
-	echo "content: "
-	echo $summary
-	echo ""
+	echo "from: $sender$newline$newline""subject: $title$newline$newline""content: $newline$newline$summary" | less
     fi
-    echo "next..."
+    echo "$newline""next..."
     sleep 1s
 
 done
