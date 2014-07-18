@@ -6,10 +6,35 @@
 # -------------------------------------------------
  
 # pulling html from inbox
-wget -T 3 -t 1 -q --secure-protocol=TLSv1 \
- --no-check-certificate \
- --user=$1 --password=$2 \
- https://mail.google.com/mail/feed/atom -O gmail.$1.$$.out
+# wget -T 3 -t 1 -q --secure-protocol=TLSv1 \
+#  --no-check-certificate \
+#  --user=$1 --password=$2 \
+#  https://mail.google.com/mail/feed/atom -O gmail.$1.$$.out
 
 # parsing html
+file=tmp.out
+parsed_file=tmp.parsed.out
+cat $file | perl -ne 'foreach( $_ =~ m/<entry>(.*?)<\/entry/g ){ print $_."\n"; }' > $parsed_file
 
+# showing emails=
+IFS=$'\n'
+for m in `cat $parsed_file`; do
+    
+    title=`echo $m | sed 's/.*<title>//g' | sed 's/<\/title>.*//g'`
+    summary=`echo $m | sed 's/.*<summary>//g' | sed 's/<\/summary>.*//g'`
+    sender=`echo $m | sed 's/.*<email>//g' | sed 's/<\/email>.*//g'`
+    echo "--------------------------------------------"
+    echo "from: "$sender
+    echo "subject: "$title
+    echo ""
+    read -p "wanna read it? (y/n)" response
+    if [ "$response" = "y" ]; then
+	echo ""
+	echo "content: "
+	echo $summary
+	echo ""
+    fi
+    echo "next..."
+    sleep 1s
+
+done
