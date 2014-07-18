@@ -41,9 +41,19 @@ for m in `cat $parsed_html`; do
     echo ""
     read -p "wanna read it? (y/n)" response
     if [ "$response" = "y" ]; then
-	echo "from: $sender$newline$newline""subject: $title$newline$newline""content: $newline$newline$summary" | less
+	emailcontent=gmail.$1.$$.email$RANDOM$RANDOM.content
+	emaildraft=${emailcontent/.content/.draft}
+	echo "from: $sender$newline" > $emailcontent
+	echo "subject: $title$newline" >> $emailcontent
+	echo "content: $newline$newline$summary" >> $emailcontent
+	vi -o $emailcontent $emaildraft
+	read -p "send response? (y/n)" sendresponse
+	if [ "$sendresponse" = "y" ]; then
+	    echo "sending..."
+	fi
+	rm $emailcontent $emaildraft
     fi
-    echo "$newline""next..."
+    echo "next..."
     sleep 1s
 
 done
