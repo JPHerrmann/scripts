@@ -4,20 +4,24 @@
 # @param $2 - password
 # @author <bprinty@gmail.com>
 # -------------------------------------------------
- 
+
 # stoopid checking
 if [ $# -ne 2 ]; then
     echo "usage: email <username> <password>"
 fi
+email=$1
+pass=$2
+trash=/tmp
+bin="$( readlink -f -- "$( dirname -- "$0" )" )"
 
 # pulling html from inbox
-html=gmail.$1.$$.out
+html=$trash/gmail.$email.$$.out
 wget -T 3 -t 1 -q --secure-protocol=TLSv1 \
   --no-check-certificate \
-  --user=$1 --password=$2 \
+  --user=$email --password=$pass \
   https://mail.google.com/mail/feed/atom -O $html
 
-if [ "`wc -l $html`" = "0" ]; then
+if [ ! -e $html ]; then
     echo "no new emails..."
     rm $html
     exit 0
@@ -41,17 +45,21 @@ for m in `cat $parsed_html`; do
     echo ""
     read -p "wanna read it? (y/n)" response
     if [ "$response" = "y" ]; then
-	emailcontent=gmail.$1.$$.email$RANDOM$RANDOM.content
+	emailcontent=$trash/gmail.$email.$$.email$RANDOM$RANDOM.content
 	emaildraft=${emailcontent/.content/.draft}
 	echo "from: $sender$newline" > $emailcontent
 	echo "subject: $title$newline" >> $emailcontent
 	echo "content: $newline$newline$summary" >> $emailcontent
 	vi -o $emailcontent $emaildraft
-	read -p "send response? (y/n)" sendresponse
-	if [ "$sendresponse" = "y" ]; then
-	    echo "sending..."
+	if [ -e $emaildraft ]; then 
+	    read -p "send response? (y/n)" sendresponse
+	    if [ "$sendresponse" = "y" ]; then
+		echo "sending..."
+		$bin/sendmail.py --to "$sender" --user "$email" --password "$pass" --message "$emaildraft" --subject "$title"
+	    fi
+	    rm $emaildraft
 	fi
-	rm $emailcontent $emaildraft
+	rm $emailcontent
     fi
     echo "next..."
     sleep 1s
