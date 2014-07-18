@@ -51,19 +51,27 @@ for m in `cat $parsed_html`; do
 	echo "subject: $title$newline" >> $emailcontent
 	echo "content: $newline$newline$summary" >> $emailcontent
 	vi -o $emailcontent $emaildraft
+	echo -ne "\e[1A\033[2K"
 	if [ -e $emaildraft ]; then 
 	    read -p "send response? (y/n)" sendresponse
 	    if [ "$sendresponse" = "y" ]; then
 		echo "sending..."
 		$bin/sendmail.py --to "$sender" --user "$email" --password "$pass" --message "$emaildraft" --subject "$title"
+		echo -ne "\e[1A\033[2K"
 	    fi
 	    rm $emaildraft
 	fi
+	echo -ne "\e[1A\033[2K"
 	rm $emailcontent
     fi
     echo "next..."
     sleep 1s
-
+    echo -ne "\e[1A\033[2K"
+    echo -ne "\e[1A\033[2K"
+    echo -ne "\e[1A\033[2K"
+    echo -ne "\e[1A\033[2K"
+    echo -ne "\e[1A\033[2K"
+    echo -ne "\e[1A\033[2K"
 done
 
 rm $html $parsed_html
