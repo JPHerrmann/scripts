@@ -5,20 +5,31 @@
 # @author <bprinty@gmail.com>
 # -------------------------------------------------
  
+# stoopid checking
+if [ $# -ne 2 ]; then
+    echo "usage: email <username> <password>"
+fi
+
 # pulling html from inbox
-# wget -T 3 -t 1 -q --secure-protocol=TLSv1 \
-#  --no-check-certificate \
-#  --user=$1 --password=$2 \
-#  https://mail.google.com/mail/feed/atom -O gmail.$1.$$.out
+html=gmail.$1.$$.out
+wget -T 3 -t 1 -q --secure-protocol=TLSv1 \
+  --no-check-certificate \
+  --user=$1 --password=$2 \
+  https://mail.google.com/mail/feed/atom -O $html
+
+if [ "`wc -l $html`" = "0" ]; then
+    echo "no new emails..."
+    rm $html
+    exit 0
+fi
 
 # parsing html
-file=tmp.out
-parsed_file=tmp.parsed.out
-cat $file | perl -ne 'foreach( $_ =~ m/<entry>(.*?)<\/entry/g ){ print $_."\n"; }' > $parsed_file
+parsed_html=${html/.out/.parsed.out}
+cat $html | perl -ne 'foreach( $_ =~ m/<entry>(.*?)<\/entry/g ){ print $_."\n"; }' > $parsed_html
 
 # showing emails=
 IFS=$'\n'
-for m in `cat $parsed_file`; do
+for m in `cat $parsed_html`; do
     
     title=`echo $m | sed 's/.*<title>//g' | sed 's/<\/title>.*//g'`
     summary=`echo $m | sed 's/.*<summary>//g' | sed 's/<\/summary>.*//g'`
@@ -38,3 +49,5 @@ for m in `cat $parsed_file`; do
     sleep 1s
 
 done
+
+rm $html $parsed_html
