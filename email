@@ -1,0 +1,77 @@
+#!/bin/bash
+# check gmail, with bash!
+# @param $1 - username
+# @param $2 - password
+# @author <bprinty@gmail.com>
+# -------------------------------------------------
+
+# stoopid checking
+if [ $# -ne 2 ]; then
+    echo "usage: email <username> <password>"
+fi
+email=$1
+pass=$2
+trash=/tmp
+bin="$( readlink -f -- "$( dirname -- "$0" )" )"
+
+# pulling html from inbox
+html=$trash/gmail.$email.$$.out
+wget -T 3 -t 1 -q --secure-protocol=TLSv1 \
+  --no-check-certificate \
+  --user=$email --password=$pass \
+  https://mail.google.com/mail/feed/atom -O $html
+
+if [ ! -e $html ]; then
+    echo "no new emails..."
+    rm $html
+    exit 0
+fi
+
+# parsing html
+parsed_html=${html/.out/.parsed.out}
+cat $html | perl -ne 'foreach( $_ =~ m/<entry>(.*?)<\/entry/g ){ print $_."\n"; }' > $parsed_html
+
+# showing emails
+newline=$'\n'
+IFS=$newline
+for m in `cat $parsed_html`; do
+    
+    title=`echo $m | sed 's/.*<title>//g' | sed 's/<\/title>.*//g'`
+    summary=`echo $m | sed 's/.*<summary>//g' | sed 's/<\/summary>.*//g'`
+    sender=`echo $m | sed 's/.*<email>//g' | sed 's/<\/email>.*//g'`
+    echo "--------------------------------------------"
+    echo "from: "$sender
+    echo "subject: "$title
+    echo ""
+    read -p "wanna read it? (y/n)" response
+    if [ "$response" = "y" ]; then
+	emailcontent=$trash/gmail.$email.$$.email$RANDOM$RANDOM.content
+	emaildraft=${emailcontent/.content/.draft}
+	echo "from: $sender$newline" > $emailcontent
+	echo "subject: $title$newline" >> $emailcontent
+	echo "content: $newline$newline$summary" >> $emailcontent
+	vi -o $emailcontent $emaildraft
+	echo -ne "\e[1A\033[2K"
+	if [ -e $emaildraft ]; then 
+	    read -p "send response? (y/n)" sendresponse
+	    if [ "$sendresponse" = "y" ]; then
+		echo "sending..."
+		$bin/sendmail.py --to "$sender" --user "$email" --password "$pass" --message "$emaildraft" --subject "$title"
+		echo -ne "\e[1A\033[2K"
+	    fi
+	    rm $emaildraft
+	fi
+	echo -ne "\e[1A\033[2K"
+	rm $emailcontent
+    fi
+    echo "next..."
+    sleep 1s
+    echo -ne "\e[1A\033[2K"
+    echo -ne "\e[1A\033[2K"
+    echo -ne "\e[1A\033[2K"
+    echo -ne "\e[1A\033[2K"
+    echo -ne "\e[1A\033[2K"
+    echo -ne "\e[1A\033[2K"
+done
+
+rm $html $parsed_html

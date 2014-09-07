@@ -1,0 +1,28 @@
+#!/bin/bash
+# positions terminal window on left side
+
+if [ $# -eq 0 ]; then
+    echo 'span [top|bottom|full]'
+    exit 1
+fi
+
+# saving control
+control=$1
+
+# getting dimensions
+dimstr=`xrandr | tr ' ' '\n' | egrep '.*?x.*?\+0\+0' | head -1 | sed 's/+.*//g'`
+set -- "$dimstr"
+IFS="x"; declare -a dims=($*)
+width="${dims[0]}"
+height="${dims[1]}"
+
+# positioning screen
+if [ "$control" == "top" ]; then
+    wmctrl -r :ACTIVE: -e 0,0,0,$width,`expr $height / 2 - 40`
+elif [ "$control" == "bottom" ]; then 
+    wmctrl -r :ACTIVE: -e 0,0,`expr $height / 2 + 30`,$width,`expr $height / 2 - 30`
+elif [ "$control" == "full" ]; then
+    wmctrl -r :ACTIVE: -e 0,0,0,$width,$height
+fi
+
+
