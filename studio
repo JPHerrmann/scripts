@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# starts android studio
+# PARKER -- get android studio.
+#
+# @author <bprinty@gmail.com>
+# ---------------------------------------------
+
+# just in case you don't have the jdk installed
+if [ `which javac` = '' ]; then
+
+   sudo apt-get update
+   sudo apt-get install openjdk-7-jre
+   sudo apt-get install openjdk-7-jdk
+   echo '
+
+   #now set up your java home path -- like this:
+   export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+
+
+   '
+fi
+
+# this will install android studio for you too
+if [ ! -e /opt/android-studio ]; then
+   wget -O android-studio.tgz https://dl.google.com/android/studio/install/0.8.6/android-studio-bundle-135.1339820-linux.tgz
+   tar -zxvf android-studio.tgz
+   sudo mv android-studio /opt/
+fi
+
+# okay, let's start up this bitch...
+/opt/android-studio/bin/studio.sh
