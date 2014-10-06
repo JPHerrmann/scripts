@@ -1,0 +1,18 @@
+#!/bin/bash
+# 
+# recursively locates file with provided text
+# 
+# @author <bprinty@gmail.com>
+# -------------------------------------------
+
+if [ $# -ne 2 ]; then 
+   echo 'usage: crayfind <dir> <pattern>'
+   exit 1
+fi
+
+for i in `find $1`; do 
+    l=`grep $2 $i | wc -l`
+    if [ $l -gt 0 ]; then
+       echo $i
+    fi
+done
