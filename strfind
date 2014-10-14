@@ -6,7 +6,7 @@
 # -------------------------------------------
 
 if [ $# -ne 2 ]; then 
-   echo 'usage: crayfind <dir> <pattern>'
+   echo 'usage: strfind <dir> <pattern>'
    exit 1
 fi
 
