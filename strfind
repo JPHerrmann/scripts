@@ -13,6 +13,6 @@ fi
 for i in `find $1`; do 
     l=`grep $2 $i | wc -l`
     if [ $l -gt 0 ]; then
-       echo $i
+       echo $i  --  $l
     fi
 done
